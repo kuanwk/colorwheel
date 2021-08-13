@@ -1,0 +1,528 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Light Panel</TITLE>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<META http-equiv="Content-Type" content="text/html; charset=Latin-1">
+<META NAME="Author" CONTENT="?">
+<META NAME="Keywords" CONTENT="?">
+<META NAME="Description" CONTENT="--to add linear animated gradient, change radio look">
+<Style type="text/css">
+<!--
+:root {
+	--hue:240;
+	--saturation:50%;
+	--lightness:50%;
+	--hsl:hsl(var(--hue), var(--saturation), var(--lightness));
+	--color:#FF0000;
+	--sliderborderradius:5px;
+	--primarybg:white;
+	--primaryfg:black;
+	--primarybtn:lightslategray;
+	--primarybtnshade:darkgray;
+}
+[darkmode] {
+	--primarybg:black;
+	--primaryfg:white;	
+	--primarybtn:darkgray;
+	--primarybtnshade:lightslategray;
+}
+@media screen and (min-width:961px){
+	BODY {
+		width: 50%;
+	}
+	.radioItem {
+		font-size: 80%;
+	}	
+}
+@media screen and (max-width:960px){
+	body {
+		min-width: fit-content;
+	}
+	.radioItem {
+		font-size: 90%;
+	}	
+}
+html {
+  min-height: 100%;
+}
+BODY {
+	font-family:calibri, verdana,arial,helvetica,sans serif;
+	background-color:var(--color);
+	//background-image:linear-gradient(45deg, blue, red);
+	background-size: cover;
+    background-repeat:no-repeat;
+}
+FORM {
+	width:100%;
+}
+INPUT[type=text] {
+	color:var(--primaryfg);
+	background-color: var(--primarybg);
+	border-color: lightgray;
+}
+.button {
+	box-shadow:inset 0px 1px 3px 0px #91b8b3;
+	background:linear-gradient(to bottom, var(--primarybtn) 5%, var(--primarybtnshade) 100%);
+	background-color:var(--primarybtn);
+	border-radius:5px;
+	border:1px solid #566963;
+	display:inline-block;
+	cursor:pointer;
+	color:var(--primaryfg);
+	font-size:12px;
+	font-weight:bold;
+	padding:5px 23px;
+	text-decoration:none;
+	text-shadow:0px -1px 0px #2b665e;
+}
+.button:hover {
+	background:linear-gradient(to bottom, var(--primarybtnshade) 5%, var(--primarybtn) 100%);
+	background-color:#6c7c7c;
+}
+.button:active {
+	position:relative;
+	top:1px;
+}
+
+.container {
+	width: 100%; /*Width of the outside container */
+	background-color:var(--primarybg);
+	color:var(--primaryfg);
+	padding:5px 15px 5px 15px;
+	margin:5px 5px 5px 0px;
+	border-radius: 10px;
+}
+.radioContainer {
+	max-height:250px;
+	overflow-y: scroll;
+	display: flex ;
+	align-items: center;
+	justify-content: space-between;
+	flex-flow: row wrap;
+}
+.radioItem {
+	margin: 1px 0px 1px 0px;
+	width:12em;
+	text-transform: capitalize;
+}
+
+.txtContainer {
+	display:flex;
+	justify-content: space-between;
+}
+#txtColor {
+	text-transform: uppercase;
+}
+#currentColor {
+	width:95%;
+	text-transform: uppercase;
+	border-style: inset;
+	border-width: 2px 0px 2px 0px;
+}
+
+#about {
+	display:none;
+	position: absolute;
+	//transform: translate(-50%,-50%);
+	width:50%;
+	height:80%;
+	z-index:1;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	border-color: black;
+	border: 2px;
+	border-style: ridge;
+	background-color: var(--primarybg);
+	color:var(--primaryfg);
+}
+#aboutText {
+	align-items: left;
+}
+.slideblock {
+	display:flex;
+	justify-content: right;
+}
+.slidecontainer {
+	padding:5px 15px 5px 15px;
+	width: 100%;
+}
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  min-width: 90%;
+  height: 15px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+  border-radius: var(--sliderborderradius);
+}
+.sliderlabel {
+	width:10%;
+}
+.sliderText {
+	width:2em;
+	text-transform: uppercase;
+}
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 15px; /* Set a specific slider handle width */
+  height: 15px; /* Slider handle height */
+  background: var(--primarybtn); /* Green background */
+  cursor: pointer; /* Cursor on hover */
+  border-radius: var(--sliderborderradius);
+}
+.slider::-moz-range-thumb {
+  width: 15px; /* Set a specific slider handle width */
+  height: 15px; /* Slider handle height */
+  background: var(--primarybtn); /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+//-->
+</Style>
+<SCRIPT Language="Javascript" type="text/javascript">
+const txtRGB=["R", "G", "B"];
+const txtHSL=["H", "S", "L"];
+var slider;
+var output;
+
+/*if (slider!=null) { //doesnt work because slider not yet initialized
+	slider.onchange = function() {
+		var txtR=document.getElementById("txtR");
+		txtR.value=this.value;
+	}
+}*/
+
+function rdDark_onclick(checkbox) {
+	var body=document.getElementById("main");
+	if (checkbox.checked) {
+		body.setAttribute("darkmode", "true");
+	} else {
+		body.removeAttribute("darkmode");
+	}
+}
+function colorNameToHex(str){
+    var ctx = document.createElement("canvas").getContext("2d");
+	ctx.fillStyle = str;
+	return ctx.fillStyle;
+}
+
+function toHexString(intStr) {
+	var hexString=parseInt(intStr).toString(16).toUpperCase();
+	if (hexString.length==1) //lpad
+		hexString="0"+hexString;
+	return hexString;
+}
+
+function rgb2hsl(r1,g1,b1) {
+  var r=r1/255, 
+    g=g1/255, 
+    b=b1/255;
+  let v=Math.max(r,g,b), c=v-Math.min(r,g,b), f=(1-Math.abs(v+v-c-1)); 
+  let h= c && ((v==r) ? (g-b)/c : ((v==g) ? 2+(b-r)/c : 4+(r-g)/c)); 
+  return [Math.round(60*(h<0?h+6:h)), Math.round((f ? c/f : 0)*100), Math.round(((v+v-c)/2)*100)];
+}
+function hsl2rgb(h,s1,l1) 
+{
+  var s=s1/100,
+    l=l1/100;
+  let a=s*Math.min(l,1-l);
+  let f= (n,k=(n+h/30)%12) => l - a*Math.max(Math.min(k-3,9-k,1),-1);                 
+  return [Math.round(f(0)*255),Math.round(f(8)*255),Math.round(f(4)*255)];
+}   
+
+function hsl_onChange(slider, txtId) {
+	var root=document.querySelector(':root');
+
+	var h=document.getElementById("rangeH").value,
+		s=document.getElementById("rangeS").value,
+		l=document.getElementById("rangeL").value;
+	root.style.setProperty("--hue", h);
+	root.style.setProperty("--saturation", s+"%");
+	root.style.setProperty("--lightness", l+"%");
+	var hslColor=getComputedStyle(root).getPropertyValue("--hsl");
+	root.style.setProperty("--color", hslColor);
+
+	document.getElementById("txtH").value=h,
+	document.getElementById("txtS").value=s,
+	document.getElementById("txtL").value=l;	
+
+	var rgb=hsl2rgb(h, s, l);
+	var rgbStr="#"+toHexString(rgb[0])+toHexString(rgb[1])+toHexString(rgb[2])
+	changeColor(rgbStr);
+}
+function slider_onChange(slider, txtId) {
+	var output=document.getElementById(txtId);
+	output.value = toHexString(slider.value);
+
+	var code='';
+	for (let i=0; i<txtRGB.length; i++) {
+		code=code+document.getElementById("txt"+txtRGB[i]).value;
+	}
+	color="#"+code;
+	return changeColor(color);
+}
+
+function createRadio(colorName) {
+	var node=document.createElement("input");
+	attributes=[["type", "radio"], ["name", "rd"], ["value", colorName],
+		["oninput", "changeColor(this.value)"] ];
+	for (var j=0; j<attributes.length; j++) { 
+		node.setAttribute(attributes[j][0], attributes[j][1]);
+	}
+
+	return node;
+}
+function createColorName(colorName) {
+  return document.createTextNode(" "+colorName);
+}
+function createSpan(colorCode) {
+  var spanNode=document.createElement("span");
+  spanNode.setAttribute("style", "background-color:"+colorCode);
+  spanNode.innerHTML="&nbsp;&nbsp;";
+
+  return spanNode;  
+}
+function populateRadio(elt) {
+	var txtPresetKeys=["black", "blue", "cyan", "green", "indigo", 
+		"orange", "pink", "purple", "red", "violet", 
+		"white", "yellow",
+		"antiquewhite", "aqua", "aquamarine", "azure", "aliceblue",
+		"beige", "bisque", "blanchedalmond", 
+		"blueviolet", "brown", "burlywood", "chartreuse", "chocolate",
+		"coral", "cornflowerblue", "cornsilk", "crimson", 
+		"cadetblue", "darkblue", "darkcyan", "darkgoldenrod", "darkgray",
+		"darkgreen", "darkkhaki", "darkmagenta", "darkolivegreen", "darkorange",
+		"darkorchid", "darkred", "darksalmon", "darkseagreen", "darkslateblue",
+		"darkslategray", "darkturquoise", "darkviolet", "deeppink", "deepskyblue",
+		"dimgray", "dodgerblue", "floralwhite", "forestgreen", "fuchsia",
+		"firebrick", "gainsboro", "ghostwhite", "gold", "goldenrod",
+		"gray",  "greenyellow", "hotpink", "honeydew",
+		"ivory", "indianred ", "khaki", "lavender",
+		"lavenderblush", "lawngreen", "lemonchiffon", "lightblue", "lightcoral",
+		"lightcyan", "lightgoldenrodyellow", "lightgrey", "lightgreen", "lightpink",
+		"lightsalmon", "lightseagreen", "lightskyblue", "lightslategray", "lightsteelblue",
+		"lightyellow", "lime", "limegreen", "linen", "magenta", 
+		"maroon", "mediumaquamarine", "mediumblue", "mediumorchid", "mediumpurple",
+		"mediumseagreen", "mediumslateblue", "mediumspringgreen", "mediumturquoise", "mediumvioletred",
+		"midnightblue", "mintcream", "mistyrose", "moccasin", "navy",
+		"navajowhite", "olive", "olivedrab", "orangered",
+		"orchid", "oldlace", "palegoldenrod", "palegreen", "paleturquoise",
+		"palevioletred", "papayawhip", "peachpuff", "peru", 
+		"plum", "powderblue", "rosybrown",
+		"royalblue", "rebeccapurple", "saddlebrown", "salmon", "sandybrown",
+		"seagreen", "seashell", "sienna", "silver", "skyblue",
+		"slateblue", "slategray", "snow", "springgreen", "steelblue",
+		"teal", "thistle", "tomato", "turquoise", "tan",
+		"whitesmoke", "wheat", "yellowgreen", 
+	]
+	for (var x in txtPresetKeys) {
+		colorName=txtPresetKeys[x];
+		//colorCode=txtPreset[colorName];
+		let node=document.createElement("div");
+		node.className="radioItem";
+		//node.setAttribute("class", "radioItem");
+		node.appendChild(createRadio(colorName));
+		node.appendChild(createSpan(colorName));    
+		node.appendChild(createColorName(colorName));
+		
+		document.getElementById(elt).appendChild(node);
+	}
+}
+function populateHslSlider(elt) {
+	for (var i=0;i<txtHSL.length;i++){
+		var txtR="txt"+txtHSL[i],
+			rangeR="range"+txtHSL[i];
+		var spanTxt=document.createElement("span")
+			textbox=document.createElement("input"),
+			slider=document.createElement("input"),
+			div=document.createElement("div");
+
+		var txtAttrs={"type":"text", "class":"sliderText", "maxlength":5, "name":txtR, "id":txtR, 
+			"readonly":null};
+		var txtKeys=Object.keys(txtAttrs);
+		for (var x in txtKeys) {
+			textbox.setAttribute(txtKeys[x], txtAttrs[txtKeys[x]])
+		}
+
+		var max=100;
+		if (rangeR=="rangeH")
+			max=360;
+		var rangeAttrs={"type":"range", "min":0, "max":max, "value":0, "class":"slider", "id":rangeR, 
+			"oninput":"hsl_onChange(this, '"+txtR+"')"}
+		var rangeKeys=Object.keys(rangeAttrs);
+		for (var x in rangeKeys) {
+			slider.setAttribute(rangeKeys[x], rangeAttrs[rangeKeys[x]])
+		}
+
+		spanTxt.className="sliderlabel";
+		spanTxt.textContent=txtHSL[i]+":";
+		div.className="slideblock";
+		div.appendChild(spanTxt);
+		div.appendChild(slider);
+		div.appendChild(textbox);
+
+		document.getElementById(elt).appendChild(div);
+	}
+}
+
+function populateSlider(elt) {
+	for (var i=0;i<txtRGB.length;i++){
+		var txtR="txt"+txtRGB[i],
+			rangeR="range"+txtRGB[i];
+		var spanTxt=document.createElement("span"),
+			textbox=document.createElement("input"),
+			slider=document.createElement("input"),
+			div=document.createElement("div");
+
+		var txtAttrs={"type":"text", "class":"sliderText", "maxlength":5, "name":txtR, "id":txtR, 
+			"readonly":null};
+		var txtKeys=Object.keys(txtAttrs);
+		for (var x in txtKeys) {
+			textbox.setAttribute(txtKeys[x], txtAttrs[txtKeys[x]])
+		}
+
+		var rangeAttrs={"type":"range", "min":0, "max":255, "value":0, "class":"slider", "id":rangeR, 
+			"oninput":"slider_onChange(this, '"+txtR+"')"}
+		var rangeKeys=Object.keys(rangeAttrs);
+		for (var x in rangeKeys) {
+			slider.setAttribute(rangeKeys[x], rangeAttrs[rangeKeys[x]])
+		}
+
+		spanTxt.className="sliderlabel";
+		spanTxt.textContent=txtRGB[i]+":";
+		div.className="slideblock";
+		div.appendChild(spanTxt);
+		div.appendChild(slider);
+		div.appendChild(textbox);
+
+		document.getElementById(elt).appendChild(div);
+	}
+}
+
+window.onload=function() {
+	populateHslSlider("huecontainer");
+	populateSlider("slidecontainer");
+	populateRadio("radioContainer");
+
+	var root=document.querySelector(':root');
+	changeColor(getComputedStyle(root).getPropertyValue("--color"));
+}
+
+function toggleVisible(id) {
+	var states=["hidden", "visible"],
+		displayStates=["none","block"],
+		x = document.getElementById(id);
+
+	if (x!=null) {
+		x.style.visibility=states[(states.indexOf(x.style.visibility)+1) % states.length];
+		x.style.display=displayStates[(displayStates.indexOf(x.style.display)+1) % displayStates.length];
+	}
+}
+function updateRGB(color) {
+	if (color!=null && color.startsWith("#") && color.length==7) {
+		var hexColor=color;
+	} else {
+		var hexColor=colorNameToHex(color);
+	}
+
+	var red=hexColor.substr(1,2),
+		green=hexColor.substr(3,2),
+		blue=hexColor.substr(5,2);
+	document.getElementById("rangeR").value=parseInt(red, 16);
+	document.getElementById("txtR").value=red;
+	document.getElementById("rangeG").value=parseInt(green, 16);
+	document.getElementById("txtG").value=green;
+	document.getElementById("rangeB").value=parseInt(blue, 16);
+	document.getElementById("txtB").value=blue;
+
+}
+function updateHSL(color){
+	if (color!=null && color.startsWith("#") && color.length==7) {
+		var hexColor=color;
+	} else {
+		var hexColor=colorNameToHex(color);
+	}
+	var red=hexColor.substr(1,2),
+		green=hexColor.substr(3,2),
+		blue=hexColor.substr(5,2);
+	var hsl=rgb2hsl(parseInt(red, 16), parseInt(green, 16), parseInt(blue, 16))
+	
+	for (var i=0;i< txtHSL.length;i++) {
+		var text=document.getElementById("txt"+txtHSL[i]),
+			range=document.getElementById("range"+txtHSL[i]);
+		text.value=hsl[i];
+		range.value=hsl[i];
+	}
+}
+function changeColor(color) {
+	var root=document.querySelector(':root');
+	//alert(getComputedStyle(root).getPropertyValue("--color"));
+	root.style.setProperty("--color", color);
+	
+	var body=document.querySelector('body');
+	body.style.setProperty("background-image", "none");
+	
+	//to update other inputs
+	document.getElementById("currentColor").innerHTML=" "+color;
+	document.getElementById("txtColor").value=color;
+
+	updateRGB(color);
+	updateHSL(color);
+
+	return false;
+}
+function changeColorByText(frm) {
+	return changeColor(frm.txtColor.value);
+}
+</SCRIPT>
+</HEAD>
+
+<BODY id="main">
+	<DIV id="widget">
+		<div class="container" id="about">
+			<div id="aboutText">
+				<div>HSL/RGB Light Panel</div>
+				<div>May 2021</div>
+				<div>Requires IE11, Firefox, Chrome</div>
+			</div>
+			<div><input type="button" onclick="document.getElementById('about').style.display='none'" value="OK"></div>
+		</div>
+		<Form enctype="multipart/form-data" method="Post" action="" name="frmInputByHSL" onSubmit="return false">
+			<div class="container slidecontainer" id="huecontainer"></div>
+		</Form>
+		<Form enctype="multipart/form-data" method="Post" action="" name="frmInputBySlider" onSubmit="return false">
+			<div class="container slidecontainer" id="slidecontainer"></div>
+		</Form>
+		<Form enctype="multipart/form-data" action="#" name="frmInputByPreset" id="frmInput" onSubmit="return changeColorByText(this);">
+			<div class="container presetContainer">
+				<div class="radioContainer" id="radioContainer"></div>
+				<div id="currentColor"></div>
+			</div>
+		</Form>
+		<Form enctype="multipart/form-data" action="#" name="frmInput" class="container txtContainer" id="frmInputByText" onSubmit="return changeColorByText(this);">
+			<span>
+				<Input type="text" maxlength=16 name="txtColor" id="txtColor" value="purple">
+				<Input type="submit" class="button" name="btnSubmit" value="Update">
+			</span>
+			<span>
+				<Input type="checkbox" name="rdDark" onclick="rdDark_onclick(this)">Dark Mode
+			</span>
+			<Input type="button" name="btnAbout" class="button" value="About" onclick="document.getElementById('about').style.display='flex'">
+		</Form>
+	</DIV>
+	<Input type="button" name="btnToggle" class="button" value="Toggle" onclick="toggleVisible('widget')">
+</BODY>
+</HTML>
